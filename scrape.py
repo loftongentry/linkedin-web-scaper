@@ -1,12 +1,10 @@
 """
 Scraping order of operations:
 
-1. Have to go to this url: https://www.linkedin.com/in/<user's profile-name>/recent-activity/all/
-2. Have to go to fie-impression-container to get each individual post => array of classes with id 'fie-impression-container'
-  -Posts text are found under this class: update-components-text relative update-components-update-v2__commentary 
-  -Social interactions found under this class: social-details-social-counts__reactions-count
-  -Comments hidden under a span with no class name, but has the word "comments" associated with it
-  -If span with "...more" found, click it to extract all the remaining text
+1. Could go to this url: https://www.linkedin.com/in/<user's profile-name>/recent-activity/all/ or main feed
+2. Extracting post text, number of likes, number comments, number of reposts
+3. POSSIBLE: up to separate likes modal to separate them further to adjust scoring
+4. POSSIBLE: open up posts and extract comments to gather post sentiment (might be redundant because no one has the guts to talk trash on a LinkedIn post)
 """
 import os
 from dotenv import load_dotenv
