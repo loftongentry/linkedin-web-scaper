@@ -1,10 +1,12 @@
 """
 Scraping order of operations:
 
-1. Could go to this url: https://www.linkedin.com/in/<user's profile-name>/recent-activity/all/ or main feed
-2. Extracting post text, number of likes, number comments, number of reposts
-3. POSSIBLE: up to separate likes modal to separate them further to adjust scoring
-4. POSSIBLE: open up posts and extract comments to gather post sentiment (might be redundant because no one has the guts to talk trash on a LinkedIn post)
+Currently: Extracting post text, number of likes, number comments, number of reposts
+TODO: Connect to PostgreSQL Database (in another file) (pip install peewee psycopg2)
+TODO: Create table and model for data entry
+TODO: Scroll down the screen some to extract more posts
+TODO: Check to make sure content is available to be extracted (within the post of posts for loop)
+TODO: Save to PostgreSQL database
 """
 import os
 from dotenv import load_dotenv
@@ -39,6 +41,7 @@ def scrape_linkedin_posts(driver):
   # REGEX expression to extract the UUID of the post
   pattern = re.compile(r'urn:li:activity:\d+')
 
+  # SCROLL DOWN SOMEWHERE AROUND HERE
   page_source = driver.page_source
   soup = BeautifulSoup(page_source, 'html.parser')
   posts = soup.find_all('div', {'data-id': pattern})
@@ -46,10 +49,8 @@ def scrape_linkedin_posts(driver):
   # Parse through all of the posts found on the page that have loaded
   for post in posts:
     post_id = post.get('data-id')
-    print(post_id)
 
     post_container = post.find('div', {'id': 'fie-impression-container'})
-
     post_content = post_container.find('div', {'class': 'update-components-text relative update-components-update-v2__commentary'})
     
     # Extract the text from the post
