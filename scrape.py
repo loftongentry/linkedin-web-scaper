@@ -25,8 +25,6 @@ linkedin_password = os.getenv('LINKEDIN_PASSWORD')
 
 linkedin_login_url = 'https://www.linkedin.com/login'
 
-posts_url = os.getenv('POSTS_URL')
-
 def login_to_linkedin(driver, username, password):
   driver.get(linkedin_login_url)
   time.sleep(2)
@@ -35,24 +33,34 @@ def login_to_linkedin(driver, username, password):
   driver.find_element(By.ID, 'password').send_keys(Keys.RETURN)
   time.sleep(3)
 
-def scrape_linkedin_posts(driver, url):
-  driver.get(url)
+def scrape_linkedin_posts(driver):
   time.sleep(2)
+
+  # REGEX expression to extract the UUID of the post
+  pattern = re.compile(r'urn:li:activity:\d+')
 
   page_source = driver.page_source
   soup = BeautifulSoup(page_source, 'html.parser')
-  posts = soup.find_all('div', {'id': 'fie-impression-container'})
-
+  posts = soup.find_all('div', {'data-id': pattern})
+  
   # Parse through all of the posts found on the page that have loaded
   for post in posts:
-    post_content = post.find('div', {'class': 'update-components-text relative update-components-update-v2__commentary'})
+    post_id = post.get('data-id')
+    print(post_id)
+
+    post_container = post.find('div', {'id': 'fie-impression-container'})
+
+    post_content = post_container.find('div', {'class': 'update-components-text relative update-components-update-v2__commentary'})
     
     # Extract the text from the post
     post_content_text = post_content.find('span', {'dir': 'ltr'}).text
+    print(post_content_text)
     
     # Extract social interactions in total
-    post_social_interaction_count = post.find('span', {'class': 'social-details-social-counts__reactions-count'}).text
-    
+    post_social_interaction_count = post.find('span', {'class': 'social-details-social-counts__reactions-count'})
+    if(post_social_interaction_count):
+      print(post_social_interaction_count.text)
+
     # Extract number of comments
     post_social_interaction_comments = str(post.select_one('button[aria-label*=comment]'))
     if post_social_interaction_comments:
@@ -76,6 +84,6 @@ def scrape_linkedin_posts(driver, url):
     print('---------------------')
 
 login_to_linkedin(driver, linkedin_username, linkedin_password)
-scrape_linkedin_posts(driver, posts_url)
+scrape_linkedin_posts(driver)
 
 driver.quit()
