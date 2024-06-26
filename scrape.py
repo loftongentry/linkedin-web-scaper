@@ -7,6 +7,7 @@ TODO: Create table and model for data entry
 TODO: Scroll down the screen some to extract more posts
 TODO: Check to make sure content is available to be extracted (within the post of posts for loop)
 TODO: Save to PostgreSQL database
+TODO: Create a CRON job to do this automatically
 """
 import os
 from dotenv import load_dotenv
