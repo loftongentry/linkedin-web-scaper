@@ -7,11 +7,11 @@ class LinkedInPost(Model):
     database = db
     table_name = 'linkedin_posts'
 
-  post_id = IntegerField(
+  post_id = CharField(
     primary_key = True
   )
   post_content_text = TextField(
-    null = False
+    null = True
   )
   post_social_interaction_count = IntegerField(
     null = True
