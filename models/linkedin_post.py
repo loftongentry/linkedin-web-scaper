@@ -43,5 +43,3 @@ def create_table():
   finally:
     db.close()
     print('Disconnected')
-
-create_table()
