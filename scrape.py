@@ -50,42 +50,49 @@ def scrape_linkedin_posts(driver):
     
     # Parse through all of the posts found on the page that have loaded
     for post in posts:
+      post_social_interaction_count = None
+      comment_count = None
+      repost_count = None
+      
       # NOTE: Extracting post id as characters because Integer format was too large to be stored
       post_id = post.get('data-id')
 
       # Finding the actual post content we want
       post_container = post.find('div', {'id': 'fie-impression-container'})
-      post_content = post_container.find('div', {'class': 'update-components-text relative update-components-update-v2__commentary'})
-      
-      # Extract the text from the post
-      post_content_text = post_content.find('span', {'dir': 'ltr'}).text
-      
-      # Extract social interactions in total if they exist
-      post_social_interaction = post.find('span', {'class': 'social-details-social-counts__reactions-count'})
-      if post_social_interaction:
-         post_social_interaction_count = post_social_interaction.text
+      if post_container:
+        post_content = post_container.find('div', {'class': 'update-components-text relative update-components-update-v2__commentary'})
+        
+        # Extract the text from the post
+        post_content_text = post_content.find('span', {'dir': 'ltr'}).text
+        
+        # Extract social interactions in total if they exist
+        post_social_interaction = post.find('span', {'class': 'social-details-social-counts__reactions-count'})
+        if post_social_interaction:
+          post_social_interaction_count = post_social_interaction.text
 
-      # Extract number of comments
-      post_social_interaction_comment = str(post.select_one('button[aria-label*=comment]'))
-      if post_social_interaction_comment:
-        comment_count_group = re.search(r'\d+', post_social_interaction_comment)
-        if comment_count_group:
-          comment_count = comment_count_group.group(0)
-      
-      # Extract number of reposts
-      post_social_interaction_repost = str(post.select_one('button[aria-label*=repost]'))
-      if post_social_interaction_repost:
-        repost_count_group = re.search(r'\d+', post_social_interaction_repost)
-        if repost_count_group:
-          repost_count = repost_count_group.group(0)
-      
-      create_new_entry(
-        post_id, 
-        post_content_text, 
-        post_social_interaction_count,
-        comment_count,
-        repost_count
-      )
+        # Extract number of comments
+        post_social_interaction_comment = str(post.select_one('button[aria-label*=comment]'))
+        if post_social_interaction_comment:
+          comment_count_group = re.search(r'\d+', post_social_interaction_comment)
+          if comment_count_group:
+            comment_count = comment_count_group.group(0)
+        
+        # Extract number of reposts
+        post_social_interaction_repost = str(post.select_one('button[aria-label*=repost]'))
+        if post_social_interaction_repost:
+          repost_count_group = re.search(r'\d+', post_social_interaction_repost)
+          if repost_count_group:
+            repost_count = repost_count_group.group(0)
+        
+        create_new_entry(
+          post_id, 
+          post_content_text, 
+          post_social_interaction_count,
+          comment_count,
+          repost_count
+        )
+      else:
+        print('No scraped data available to store in database')
 
   except Exception as e:
     print('Error gathering data from LinkedIn:', e)
