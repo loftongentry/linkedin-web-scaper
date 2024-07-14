@@ -1,6 +1,5 @@
 """
 Currently: Extracting post text, number of likes, number comments, number of reposts
-TODO: Check to make sure content is available to be extracted (within the post of posts for loop)
 TODO: Create a CRON job to do this automatically
 """
 import os
